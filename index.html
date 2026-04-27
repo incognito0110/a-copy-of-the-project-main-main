@@ -64,8 +64,96 @@
   </body>
 
   <script>
-    "use strict";
-    
-    console.log("It works!");
+          const commentsListEl = document.querySelector('.comments');
+          const nameInputEl = document.querySelector('.add-form-name');
+          const textInputEl = document.querySelector('.add-form-text');
+          const addFormButtonEl = document.querySelector('.add-form-button');
+          
+          let nameValue = "";
+          let commentValue = "";
+
+          nameInputEl.addEventListener("input", () => {
+        nameValue = nameInputEl.value;
+        nameInputEl.classList.remove("-invalid");
+      });
+
+          textInputEl.addEventListener("input", () => {
+        commentValue = textInputEl.value;
+        textInputEl.classList.remove("-invalid");
+          });
+
+          
+      addFormButtonEl.addEventListener("click", () => {
+        const trimmedName = nameValue.trim();
+        const trimmedComment = commentValue.trim();
+
+        nameInputEl.classList.remove("-invalid");
+        textInputEl.classList.remove("-invalid");
+
+        if (!trimmedName || !trimmedComment) {
+          if (!trimmedName) nameInputEl.classList.add("-invalid");
+          if (!trimmedComment) textInputEl.classList.add("-invalid");
+          return;
+        }
+
+      const now = new Date().toLocaleString("ru-RU", {    
+        day: "2-digit",
+        month: "2-digit",
+        year: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+      });
+
+      const newCommentHtml = `
+        <li class="comment">
+                <div class="comment-header">
+                  <div>${trimmedName}</div>
+                  <div>${now}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                    ${trimmedComment}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter">0</span>
+                    <button class="like-button"></button>
+                  </div>
+                </div>
+              </li>
+      `;
+
+      commentsListEl.innerHTML += newCommentHtml;
+
+      nameValue = "";
+      commentValue = "";
+      nameInputEl.value = "";
+      textInputEl.value = "";
+      });
+
+      commentsListEl.addEventListener("click", (event) => {
+        const likeButtonEl = event.target.closest(".like-button");
+
+        if (!likeButtonEl) {
+          return;
+        }
+
+        const likesContainerEl = likeButtonEl.closest(".likes");
+        const likesCounterEl = likesContainerEl.querySelector(".likes-counter");
+        const currentLikes = Number(likesCounterEl.textContent);
+        const isLiked = likeButtonEl.classList.contains("-active-like");
+
+        if (isLiked) {
+          likeButtonEl.classList.remove("-active-like");
+          likesCounterEl.textContent = String(Math.max(0, currentLikes - 1));
+        } else {
+          likeButtonEl.classList.add("-active-like");
+          likesCounterEl.textContent = String(currentLikes + 1);
+        }
+      });
+
+
   </script>
 </html>
