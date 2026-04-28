@@ -64,25 +64,73 @@
   </body>
 
   <script>
-          const commentsListEl = document.querySelector('.comments');
-          const nameInputEl = document.querySelector('.add-form-name');
-          const textInputEl = document.querySelector('.add-form-text');
-          const addFormButtonEl = document.querySelector('.add-form-button');
-          
-          let nameValue = "";
-          let commentValue = "";
+      const commentsListEl = document.querySelector(".comments");
+      const nameInputEl = document.querySelector(".add-form-name");
+      const textInputEl = document.querySelector(".add-form-text");
+      const addFormButtonEl = document.querySelector(".add-form-button");
 
-          nameInputEl.addEventListener("input", () => {
+      let nameValue = "";
+      let commentValue = "";
+
+      const comments = [
+        {
+          name: "Глеб Фокин",
+          date: "12.02.22 12:18",
+          text: "Это будет первый комментарий на этой странице",
+          likes: 3,
+          isLiked: false,
+        },
+        {
+          name: "Варвара Н.",
+          date: "13.02.22 19:22",
+          text: "Мне нравится как оформлена эта страница! ❤",
+          likes: 75,
+          isLiked: true,
+        },
+      ];
+
+      const renderComments = () => {
+        const commentsHtml = comments
+          .map((comment, index) => {
+            const likeButtonClass = comment.isLiked
+              ? "like-button -active-like"
+              : "like-button";
+
+            return `
+              <li class="comment">
+                <div class="comment-header">
+                  <div>${comment.name}</div>
+                  <div>${comment.date}</div>
+                </div>
+                <div class="comment-body">
+                  <div class="comment-text">
+                    ${comment.text}
+                  </div>
+                </div>
+                <div class="comment-footer">
+                  <div class="likes">
+                    <span class="likes-counter">${comment.likes}</span>
+                    <button class="${likeButtonClass}" data-index="${index}"></button>
+                  </div>
+                </div>
+              </li>
+            `;
+          })
+          .join("");
+
+        commentsListEl.innerHTML = commentsHtml;
+      };
+
+      nameInputEl.addEventListener("input", () => {
         nameValue = nameInputEl.value;
         nameInputEl.classList.remove("-invalid");
       });
 
-          textInputEl.addEventListener("input", () => {
+      textInputEl.addEventListener("input", () => {
         commentValue = textInputEl.value;
         textInputEl.classList.remove("-invalid");
-          });
+      });
 
-          
       addFormButtonEl.addEventListener("click", () => {
         const trimmedName = nameValue.trim();
         const trimmedComment = commentValue.trim();
@@ -96,64 +144,50 @@
           return;
         }
 
-      const now = new Date().toLocaleString("ru-RU", {    
+      const now = new Date().toLocaleString("ru-RU", {
         day: "2-digit",
         month: "2-digit",
         year: "2-digit",
         hour: "2-digit",
         minute: "2-digit",
         hour12: false,
-      });
+      }).replace(",", "");
 
-      const newCommentHtml = `
-        <li class="comment">
-                <div class="comment-header">
-                  <div>${trimmedName}</div>
-                  <div>${now}</div>
-                </div>
-                <div class="comment-body">
-                  <div class="comment-text">
-                    ${trimmedComment}
-                  </div>
-                </div>
-                <div class="comment-footer">
-                  <div class="likes">
-                    <span class="likes-counter">0</span>
-                    <button class="like-button"></button>
-                  </div>
-                </div>
-              </li>
-      `;
+        comments.push({
+          name: trimmedName,
+          date: now,
+          text: trimmedComment,
+          likes: 0,
+          isLiked: false,
+        });
 
-      commentsListEl.innerHTML += newCommentHtml;
+        renderComments();
 
-      nameValue = "";
-      commentValue = "";
-      nameInputEl.value = "";
-      textInputEl.value = "";
+        nameValue = "";
+        commentValue = "";
+        nameInputEl.value = "";
+        textInputEl.value = "";
       });
 
       commentsListEl.addEventListener("click", (event) => {
         const likeButtonEl = event.target.closest(".like-button");
-
         if (!likeButtonEl) {
           return;
         }
 
-        const likesContainerEl = likeButtonEl.closest(".likes");
-        const likesCounterEl = likesContainerEl.querySelector(".likes-counter");
-        const currentLikes = Number(likesCounterEl.textContent);
-        const isLiked = likeButtonEl.classList.contains("-active-like");
-
-        if (isLiked) {
-          likeButtonEl.classList.remove("-active-like");
-          likesCounterEl.textContent = String(Math.max(0, currentLikes - 1));
-        } else {
-          likeButtonEl.classList.add("-active-like");
-          likesCounterEl.textContent = String(currentLikes + 1);
+        const index = Number(likeButtonEl.dataset.index);
+        const comment = comments[index];
+        if (!comment) {
+          return;
         }
+
+        comment.isLiked = !comment.isLiked;
+        comment.likes += comment.isLiked ? 1 : -1;
+
+        renderComments();
       });
 
+      renderComments();
 
   </script>
 </html>
