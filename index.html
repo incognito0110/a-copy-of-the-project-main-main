@@ -89,6 +89,15 @@
         },
       ];
 
+      const escapeHtml = (value) => {
+        return value
+          .replaceAll("&", "&amp;")
+          .replaceAll("<", "&lt;")
+          .replaceAll(">", "&gt;")
+          .replaceAll('"', "&quot;")
+          .replaceAll("'", "&#39;");
+      };
+
       const renderComments = () => {
         const commentsHtml = comments
           .map((comment, index) => {
@@ -97,14 +106,14 @@
               : "like-button";
 
             return `
-              <li class="comment">
+              <li class="comment" data-index="${index}">
                 <div class="comment-header">
-                  <div>${comment.name}</div>
+                  <div>${escapeHtml(comment.name)}</div>
                   <div>${comment.date}</div>
                 </div>
                 <div class="comment-body">
                   <div class="comment-text">
-                    ${comment.text}
+                    ${escapeHtml(comment.text)}
                   </div>
                 </div>
                 <div class="comment-footer">
@@ -171,20 +180,40 @@
 
       commentsListEl.addEventListener("click", (event) => {
         const likeButtonEl = event.target.closest(".like-button");
-        if (!likeButtonEl) {
+        if (likeButtonEl) {
+          const index = Number(likeButtonEl.dataset.index);
+          const comment = comments[index];
+          if (!comment) {
+            return;
+          }
+
+          comment.isLiked = !comment.isLiked;
+          comment.likes += comment.isLiked ? 1 : -1;
+
+          renderComments();
           return;
         }
 
-        const index = Number(likeButtonEl.dataset.index);
+        const commentEl = event.target.closest(".comment");
+        if (!commentEl) {
+          return;
+        }
+
+        const index = Number(commentEl.dataset.index);
         const comment = comments[index];
         if (!comment) {
           return;
         }
-
-        comment.isLiked = !comment.isLiked;
-        comment.likes += comment.isLiked ? 1 : -1;
-
-        renderComments();
+        
+        const quotedText = comment.text
+          .split("\n")
+          .map((line) => `> ${line}`)
+          .join("\n");
+        const quote = `> ${comment.name}:\n${quotedText}\n`;
+        const hasText = textInputEl.value.trim().length > 0;
+        textInputEl.value = hasText ? `${textInputEl.value}\n${quote}` : quote;
+        commentValue = textInputEl.value;
+        textInputEl.focus();
       });
 
       renderComments();
