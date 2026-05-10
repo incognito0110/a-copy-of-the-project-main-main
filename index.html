@@ -108,12 +108,12 @@
             return `
               <li class="comment" data-index="${index}">
                 <div class="comment-header">
-                  <div>${escapeHtml(comment.name)}</div>
+                  <div>${comment.name}</div>
                   <div>${comment.date}</div>
                 </div>
                 <div class="comment-body">
                   <div class="comment-text">
-                    ${escapeHtml(comment.text)}
+                    ${comment.text}
                   </div>
                 </div>
                 <div class="comment-footer">
@@ -163,9 +163,9 @@
       }).replace(",", "");
 
         comments.push({
-          name: trimmedName,
+          name: escapeHtml(trimmedName),
           date: now,
-          text: trimmedComment,
+          text: escapeHtml(trimmedComment),
           likes: 0,
           isLiked: false,
         });
@@ -178,19 +178,27 @@
         textInputEl.value = "";
       });
 
-      commentsListEl.addEventListener("click", (event) => {
+      const handleLikeClick = (event) => {
+        const likeButtonEl = event.target.closest(".like-button");
+        if (!likeButtonEl) {
+          return;
+        }
+
+        const index = Number(likeButtonEl.dataset.index);
+        const comment = comments[index];
+        if (!comment) {
+          return;
+        }
+
+        comment.isLiked = !comment.isLiked;
+        comment.likes += comment.isLiked ? 1 : -1;
+
+        renderComments();
+      };
+
+      const handleQuoteClick = (event) => {
         const likeButtonEl = event.target.closest(".like-button");
         if (likeButtonEl) {
-          const index = Number(likeButtonEl.dataset.index);
-          const comment = comments[index];
-          if (!comment) {
-            return;
-          }
-
-          comment.isLiked = !comment.isLiked;
-          comment.likes += comment.isLiked ? 1 : -1;
-
-          renderComments();
           return;
         }
 
@@ -214,7 +222,10 @@
         textInputEl.value = hasText ? `${textInputEl.value}\n${quote}` : quote;
         commentValue = textInputEl.value;
         textInputEl.focus();
-      });
+      };
+
+      commentsListEl.addEventListener("click", handleLikeClick);
+      commentsListEl.addEventListener("click", handleQuoteClick);
 
       renderComments();
 
