@@ -1,0 +1,34 @@
+{
+    "name": "a-copy-of-the-project-main-main",
+    "version": "1.0.0",
+    "description": "https://glebkaf.github.io/webdev-dom-homework/",
+    "main": "script.js",
+    "scripts": {
+        "lint": "eslint .",
+        "format": "prettier --write .",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/incognito0110/a-copy-of-the-project-main-main.git"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "type": "commonjs",
+    "bugs": {
+        "url": "https://github.com/incognito0110/a-copy-of-the-project-main-main/issues"
+    },
+    "homepage": "https://github.com/incognito0110/a-copy-of-the-project-main-main#readme",
+    "dependencies": {
+        "date-fns": "^4.1.0"
+    },
+    "devDependencies": {
+        "@eslint/js": "^10.0.1",
+        "eslint": "^10.4.0",
+        "eslint-config-prettier": "^10.1.8",
+        "eslint-plugin-prettier": "^5.5.5",
+        "globals": "^17.6.0",
+        "prettier": "^3.8.3"
+    }
+}
