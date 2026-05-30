@@ -1,5 +1,5 @@
+import { addCommentApi } from '../comments-api.js'
 import { comments } from '../comments-data.js'
-import { escapeHtml } from '../escape-html.js'
 import { addFormButtonEl, nameInputEl, textInputEl } from '../dom-elements.js'
 import {
     commentValue,
@@ -33,30 +33,21 @@ export const initFormHandlers = () => {
             return
         }
 
-        const now = new Date()
-            .toLocaleString('ru-RU', {
-                day: '2-digit',
-                month: '2-digit',
-                year: '2-digit',
-                hour: '2-digit',
-                minute: '2-digit',
-                hour12: false,
-            })
-            .replace(',', '')
-
-        comments.push({
-            name: escapeHtml(trimmedName),
-            date: now,
-            text: escapeHtml(trimmedComment),
-            likes: 0,
-            isLiked: false,
+        addCommentApi({
+            name: trimmedName,
+            text: trimmedComment,
         })
+            .then((newComment) => {
+                comments.push(newComment)
+                renderComments()
 
-        renderComments()
-
-        setNameValue('')
-        setCommentValue('')
-        nameInputEl.value = ''
-        textInputEl.value = ''
+                setNameValue('')
+                setCommentValue('')
+                nameInputEl.value = ''
+                textInputEl.value = ''
+            })
+            .catch((error) => {
+                alert(error.message)
+            })
     })
 }
