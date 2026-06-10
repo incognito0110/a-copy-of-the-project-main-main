@@ -5,14 +5,16 @@ const toComment = (comment) => {
     return {
         id: comment.id,
         name: comment.author?.name || 'Пользователь',
-        date: new Date(comment.date).toLocaleString('ru-RU', {
-            day: '2-digit',
-            month: '2-digit',
-            year: '2-digit',
-            hour: '2-digit',
-            minute: '2-digit',
-            hour12: false,
-        }),
+        date: new Date(comment.date)
+            .toLocaleString('ru-RU', {
+                day: '2-digit',
+                month: '2-digit',
+                year: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false,
+            })
+            .replace(',', ''),
         text: comment.text,
         likes: comment.likes,
         isLiked: comment.isLiked,

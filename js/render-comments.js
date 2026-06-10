@@ -1,5 +1,6 @@
 import { comments } from './comments-data.js'
 import { commentsListEl } from './dom-elements.js'
+import { escapeHtml } from './escape-html.js'
 
 const el = 'div'
 
@@ -13,12 +14,12 @@ export const renderComments = () => {
             return `
               <li class="comment" data-index="${index}">
                 <${el} class="comment-header">
-                  <${el}>${comment.name}</${el}>
-                  <${el}>${comment.date}</${el}>
+                  <${el}>${escapeHtml(comment.name)}</${el}>
+                  <${el}>${escapeHtml(comment.date)}</${el}>
                 </${el}>
                 <${el} class="comment-body">
                   <${el} class="comment-text">
-                    ${comment.text}
+                    ${escapeHtml(comment.text)}
                   </${el}>
                 </${el}>
                 <${el} class="comment-footer">
